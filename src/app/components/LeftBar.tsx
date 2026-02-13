@@ -216,7 +216,12 @@ const LayerRow: React.FC<LayerRowProps> = ({
 
 // ─── LeftBar ────────────────────────────────────────────────────────────
 
-const LeftBar = () => {
+interface LeftBarProps {
+    activePage: 'design' | 'r1-r2' | 'r3-r4';
+    onPageChange: (page: 'design' | 'r1-r2' | 'r3-r4') => void;
+}
+
+const LeftBar = ({ activePage, onPageChange }: LeftBarProps) => {
     const [projectName, setProjectName] = useState('Keycap Configurator');
     const projectNameRef = useRef<HTMLInputElement>(null);
     const frameworks = ["Cherry", "OEM", "DSA", "XDA", "MDA"]
@@ -446,9 +451,24 @@ const LeftBar = () => {
             {/* Pages  */}
             <div className='p-3 space-y-2'>
                 <h1 className='text-black font-semibold text-sm'>Pages</h1>
-                <div className='-ml-1 pl-2 text-sm rounded-sm text-gray-700'>Design</div>
-                <div className='-ml-1 pl-2 py-1 text-sm rounded-sm bg-gray-200 font-medium'>R1-R2 Template</div>
-                <div className='-ml-1 pl-2 text-sm rounded-sm text-gray-700'>R3-R4 Template</div>
+                <div
+                    className={`-ml-1 pl-2 py-1 text-sm rounded-sm cursor-pointer ${activePage === 'design' ? 'bg-gray-200 font-medium' : 'text-gray-700 hover:bg-gray-100'}`}
+                    onClick={() => onPageChange('design')}
+                >
+                    Design
+                </div>
+                <div
+                    className={`-ml-1 pl-2 py-1 text-sm rounded-sm cursor-pointer ${activePage === 'r1-r2' ? 'bg-gray-200 font-medium' : 'text-gray-700 hover:bg-gray-100'}`}
+                    onClick={() => onPageChange('r1-r2')}
+                >
+                    R1-R2 Template
+                </div>
+                <div
+                    className={`-ml-1 pl-2 py-1 text-sm rounded-sm cursor-pointer ${activePage === 'r3-r4' ? 'bg-gray-200 font-medium' : 'text-gray-700 hover:bg-gray-100'}`}
+                    onClick={() => onPageChange('r3-r4')}
+                >
+                    R3-R4 Template
+                </div>
             </div>
             </div>
         </>
