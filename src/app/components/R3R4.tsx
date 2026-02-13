@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState, useCallback, forwardRef, useImperativeHandle } from 'react'
 
-export interface R1R2Handle {
+export interface R3R4Handle {
   /** Returns the live SVG element for direct manipulation */
   getSvgElement: () => SVGSVGElement | null
   /** Serializes the current (possibly modified) SVG to a string */
@@ -11,7 +11,7 @@ export interface R1R2Handle {
   downloadSvg: (filename?: string) => void
 }
 
-const R1R2 = forwardRef<R1R2Handle, React.HTMLAttributes<HTMLDivElement>>(
+const R3R4 = forwardRef<R3R4Handle, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...rest }, ref) => {
     const svgContainerRef = useRef<HTMLDivElement>(null)
     const [error, setError] = useState<string | null>(null)
@@ -23,7 +23,7 @@ const R1R2 = forwardRef<R1R2Handle, React.HTMLAttributes<HTMLDivElement>>(
       const container = svgContainerRef.current
       if (!container) return
 
-      fetch('/R1-R2.svg')
+      fetch('/R3-R4.svg')
         .then((res) => {
           if (!res.ok) throw new Error(`Failed to load SVG: ${res.status}`)
           return res.text()
@@ -70,7 +70,7 @@ const R1R2 = forwardRef<R1R2Handle, React.HTMLAttributes<HTMLDivElement>>(
     }, [getSvgElement])
 
     const downloadSvg = useCallback(
-      (filename = 'keycap-export.svg') => {
+      (filename = 'keycap-r3r4-export.svg') => {
         const str = exportSvgString()
         if (!str) return
         const blob = new Blob([str], { type: 'image/svg+xml;charset=utf-8' })
@@ -108,6 +108,6 @@ const R1R2 = forwardRef<R1R2Handle, React.HTMLAttributes<HTMLDivElement>>(
   },
 )
 
-R1R2.displayName = 'R1R2'
+R3R4.displayName = 'R3R4'
 
-export default R1R2
+export default R3R4

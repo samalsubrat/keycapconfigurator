@@ -448,6 +448,7 @@ const LeftBar = () => {
                 <h1 className='text-black font-semibold text-sm'>Pages</h1>
                 <div className='-ml-1 pl-2 text-sm rounded-sm text-gray-700'>Design</div>
                 <div className='-ml-1 pl-2 py-1 text-sm rounded-sm bg-gray-200 font-medium'>R1-R2 Template</div>
+                <div className='-ml-1 pl-2 text-sm rounded-sm text-gray-700'>R3-R4 Template</div>
             </div>
             </div>
         </>

@@ -4,7 +4,7 @@ import MainArea from "./components/MainArea";
 
 export default function Home() {
   return (
-    <div className="flex">
+    <div className="flex h-screen overflow-hidden">
       <LeftBar />
       <MainArea />
     </div>
