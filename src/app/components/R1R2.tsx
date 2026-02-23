@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useRef, useEffect, useState, useCallback, forwardRef, useImperativeHandle } from 'react'
+import { namespaceSvgClasses } from '@/lib/svg-utils'
 
 export interface R1R2Handle {
   /** Returns the live SVG element for direct manipulation */
@@ -40,6 +41,9 @@ const R1R2 = forwardRef<R1R2Handle, React.HTMLAttributes<HTMLDivElement>>(
             setError('Invalid SVG file')
             return
           }
+
+          // Namespace classes to avoid collisions with other inline SVGs
+          namespaceSvgClasses(svgEl, 'r12_')
 
           // Inject into the dedicated (non-React-managed) container
           container.innerHTML = ''

@@ -3,7 +3,7 @@
 import React, { useRef, useEffect, useState, useCallback, forwardRef, useImperativeHandle } from 'react'
 import { namespaceSvgClasses } from '@/lib/svg-utils'
 
-export interface R3R4Handle {
+export interface FullPreviewHandle {
   /** Returns the live SVG element for direct manipulation */
   getSvgElement: () => SVGSVGElement | null
   /** Serializes the current (possibly modified) SVG to a string */
@@ -12,7 +12,7 @@ export interface R3R4Handle {
   downloadSvg: (filename?: string) => void
 }
 
-const R3R4 = forwardRef<R3R4Handle, React.HTMLAttributes<HTMLDivElement>>(
+const FullPreview = forwardRef<FullPreviewHandle, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...rest }, ref) => {
     const svgContainerRef = useRef<HTMLDivElement>(null)
     const [error, setError] = useState<string | null>(null)
@@ -24,7 +24,7 @@ const R3R4 = forwardRef<R3R4Handle, React.HTMLAttributes<HTMLDivElement>>(
       const container = svgContainerRef.current
       if (!container) return
 
-      fetch('/R3-R4.svg')
+      fetch('/FullPreview.svg')
         .then((res) => {
           if (!res.ok) throw new Error(`Failed to load SVG: ${res.status}`)
           return res.text()
@@ -43,7 +43,7 @@ const R3R4 = forwardRef<R3R4Handle, React.HTMLAttributes<HTMLDivElement>>(
           }
 
           // Namespace classes to avoid collisions with other inline SVGs
-          namespaceSvgClasses(svgEl, 'r34_')
+          namespaceSvgClasses(svgEl, 'fp_')
 
           // Inject into the dedicated (non-React-managed) container
           container.innerHTML = ''
@@ -74,7 +74,7 @@ const R3R4 = forwardRef<R3R4Handle, React.HTMLAttributes<HTMLDivElement>>(
     }, [getSvgElement])
 
     const downloadSvg = useCallback(
-      (filename = 'keycap-r3r4-export.svg') => {
+      (filename = 'keycap-export.svg') => {
         const str = exportSvgString()
         if (!str) return
         const blob = new Blob([str], { type: 'image/svg+xml;charset=utf-8' })
@@ -112,6 +112,6 @@ const R3R4 = forwardRef<R3R4Handle, React.HTMLAttributes<HTMLDivElement>>(
   },
 )
 
-R3R4.displayName = 'R3R4'
+FullPreview.displayName = 'FullPreview'
 
-export default R3R4
+export default FullPreview

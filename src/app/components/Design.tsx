@@ -1,10 +1,14 @@
 import React from 'react'
+import FullPreviewSVG from './FullPreviewSVG';
+import Image from 'next/image';
+
 
 const Design = () => {
     return (
-        <div className="flex items-center justify-center h-full text-muted-foreground">
-            <p className="text-sm">Design page</p>
-        </div>
+        <>
+            <FullPreviewSVG className="w-full" />
+            {/* <Image src="FullPreview.svg" alt="full" fill={true}/> */}
+        </>
     )
 }
 
