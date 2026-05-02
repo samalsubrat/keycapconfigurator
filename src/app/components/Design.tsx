@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback } from 'react'
 import InlineSVG, { defaultTheme, type SVGTheme } from './InlineSVG'
+import { type LayerNode } from '../types'
 
 // ── Color swatch with label ─────────────────────────────────
 interface ColorPickerProps {
@@ -52,8 +53,14 @@ const weightOptions = [
   { label: 'ExtraBold', value: 800 },
 ]
 
+// ── Props ───────────────────────────────────────────────────
+interface DesignProps {
+  onLayersExtracted?: (layers: LayerNode[]) => void
+  hiddenElementIds?: Set<string>
+}
+
 // ── Design Component ────────────────────────────────────────
-const Design = () => {
+const Design = ({ onLayersExtracted, hiddenElementIds }: DesignProps) => {
   const [theme, setTheme] = useState<SVGTheme>({ ...defaultTheme })
 
   const updateTheme = useCallback((key: keyof SVGTheme, value: string | number) => {
@@ -72,6 +79,8 @@ const Design = () => {
           src="/FullPreview.svg"
           theme={theme}
           className="w-full"
+          hiddenElementIds={hiddenElementIds}
+          onLayersExtracted={onLayersExtracted}
         />
       </div>
 

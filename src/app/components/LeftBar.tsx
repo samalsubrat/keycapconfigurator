@@ -11,41 +11,7 @@ import {
     ComboboxItem,
     ComboboxList,
 } from "@/components/ui/combobox"
-
-// ─── Layer tree types & data ────────────────────────────────────────────
-
-interface LayerNode {
-    id: string;
-    name: string;
-    type: 'group' | 'layer';
-    children?: LayerNode[];
-}
-
-const initialLayers: LayerNode[] = [
-    {
-        id: 'r1',
-        name: 'R1 Keycaps',
-        type: 'group',
-        children: [],
-    },
-    {
-        id: 'r2',
-        name: 'R2 Keycaps',
-        type: 'group',
-        children: [
-            { id: 'r2-text-a', name: 'Text A', type: 'layer' },
-        ],
-    },
-    {
-        id: 'r3',
-        name: 'R3 Keycaps',
-        type: 'group',
-        children: [
-            { id: 'r3-text-w', name: 'Text W', type: 'layer' },
-            { id: 'r3-text-q', name: 'Text Q', type: 'layer' },
-        ],
-    },
-];
+import { type LayerNode } from '../types';
 
 // ─── Helpers ────────────────────────────────────────────────────────────
 
@@ -219,9 +185,12 @@ const LayerRow: React.FC<LayerRowProps> = ({
 interface LeftBarProps {
     activePage: 'design' | 'r1-r2' | 'r3-r4';
     onPageChange: (page: 'design' | 'r1-r2' | 'r3-r4') => void;
+    svgLayers?: LayerNode[];
+    hiddenIds?: Set<string>;
+    onHiddenIdsChange?: (ids: Set<string>) => void;
 }
 
-const LeftBar = ({ activePage, onPageChange }: LeftBarProps) => {
+const LeftBar = ({ activePage, onPageChange, svgLayers, hiddenIds: externalHiddenIds, onHiddenIdsChange }: LeftBarProps) => {
     const [projectName, setProjectName] = useState('Keycap Configurator');
     const projectNameRef = useRef<HTMLInputElement>(null);
     const frameworks = ["Cherry", "OEM", "DSA", "XDA", "MDA"]
@@ -229,11 +198,25 @@ const LeftBar = ({ activePage, onPageChange }: LeftBarProps) => {
     const subLegends = ["None", "Devanagari", "Japanese", "Roman"]
     const keycapUnits = ["Hide", "Show"]
 
-    // ── Layers state ───────────────────────────────────────────────────
-    const [layers, setLayers] = useState<LayerNode[]>(initialLayers);
-    const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(['r2', 'r3']));
+    // ── Layers state (populated from SVG when available) ─────────────
+    const [layers, setLayers] = useState<LayerNode[]>([]);
+    const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
+
+    // Sync layers from SVG extraction
+    useEffect(() => {
+        if (svgLayers && svgLayers.length > 0) {
+            setLayers(svgLayers);
+        }
+    }, [svgLayers]);
+
+    // Sync external hiddenIds
+    useEffect(() => {
+        if (externalHiddenIds) {
+            setHiddenIds(externalHiddenIds);
+        }
+    }, [externalHiddenIds]);
     const [hoveredId, setHoveredId] = useState<string | null>(null);
     const [renamingId, setRenamingId] = useState<string | null>(null);
     const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
@@ -280,9 +263,20 @@ const LeftBar = ({ activePage, onPageChange }: LeftBarProps) => {
             const next = new Set(prev);
             if (next.has(id)) next.delete(id);
             else next.add(id);
+            // Also toggle all children if it's a group
+            const group = layers.find(l => l.id === id);
+            if (group?.children) {
+                const shouldHide = !prev.has(id);
+                group.children.forEach(child => {
+                    if (shouldHide) next.add(child.id);
+                    else next.delete(child.id);
+                });
+            }
+            // Defer parent notification to avoid setState-during-render
+            queueMicrotask(() => onHiddenIdsChange?.(next));
             return next;
         });
-    }, []);
+    }, [layers, onHiddenIdsChange]);
 
     const startRename = useCallback((id: string) => {
         setRenamingId(id);

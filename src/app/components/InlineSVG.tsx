@@ -1,17 +1,16 @@
 'use client'
 
 import React, { useRef, useEffect, useState, useCallback } from 'react'
+import { extractLayersFromSVG, type LayerNode } from '../types'
 
 // ── Color/Font configuration ────────────────────────────────
 export interface SVGTheme {
-  // Key group colors (maps to cls-1, cls-3, cls-6, cls-7 in the SVG)
-  accentColor: string      // cls-1: ESC, arrows, Enter-area keys (default: #d92830)
-  modifierColor: string    // cls-3: F-keys, Ctrl/Alt/Super, numpad top (default: #1f7cca)
-  alphaColor: string       // cls-6: main alphanumeric keys (default: #ffffff)
-  navColor: string         // cls-7: nav cluster - Ins/Home/PgUp etc. (default: #fdc32c)
-  // Typography
-  fontFamily: string       // default: 'Inter'
-  fontWeight: number       // default: 600
+  accentColor: string      // cls-1: ESC, arrows, Enter-area keys
+  modifierColor: string    // cls-3: F-keys, Ctrl/Alt/Super, numpad top
+  alphaColor: string       // cls-6: main alphanumeric keys
+  navColor: string         // cls-7: nav cluster - Ins/Home/PgUp etc.
+  fontFamily: string
+  fontWeight: number
 }
 
 export const defaultTheme: SVGTheme = {
@@ -24,18 +23,23 @@ export const defaultTheme: SVGTheme = {
 }
 
 // ── InlineSVG component ─────────────────────────────────────
-// Fetches the SVG file and injects it inline so we can manipulate its styles.
 interface InlineSVGProps {
   src: string
   theme: SVGTheme
   className?: string
+  hiddenElementIds?: Set<string>
+  onLayersExtracted?: (layers: LayerNode[]) => void
 }
 
-const InlineSVG: React.FC<InlineSVGProps> = ({ src, theme, className }) => {
+const InlineSVG: React.FC<InlineSVGProps> = ({
+  src, theme, className, hiddenElementIds, onLayersExtracted,
+}) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [svgContent, setSvgContent] = useState<string | null>(null)
+  const elementMapRef = useRef<Map<string, Element>>(new Map())
+  const layersExtractedRef = useRef(false)
 
-  // Fetch the SVG once
+  // Fetch SVG once
   useEffect(() => {
     let cancelled = false
     fetch(src)
@@ -47,89 +51,111 @@ const InlineSVG: React.FC<InlineSVGProps> = ({ src, theme, className }) => {
     return () => { cancelled = true }
   }, [src])
 
-  // Inject the SVG and apply theme whenever content or theme changes
+  // Inject SVG and apply theme
   useEffect(() => {
     if (!containerRef.current || !svgContent) return
 
-    // Parse the SVG
     const parser = new DOMParser()
     const doc = parser.parseFromString(svgContent, 'image/svg+xml')
     const svg = doc.querySelector('svg')
     if (!svg) return
 
-    // Make it responsive
     svg.setAttribute('width', '100%')
     svg.setAttribute('height', '100%')
     svg.style.display = 'block'
 
-    // Apply color overrides to keycap paths
     applyColorOverrides(svg, theme)
-
-    // Apply font overrides to all text elements
     applyFontOverrides(svg, theme)
 
-    // Replace container content
     containerRef.current.innerHTML = ''
     containerRef.current.appendChild(svg)
-  }, [svgContent, theme])
+
+    // Extract layers only once after first injection
+    if (!layersExtractedRef.current && onLayersExtracted) {
+      const { layers, elementMap } = extractLayersFromSVG(svg)
+      elementMapRef.current = elementMap
+      onLayersExtracted(layers)
+      layersExtractedRef.current = true
+    } else {
+      // Re-tag elements for the new DOM
+      retagElements(svg, elementMapRef.current)
+    }
+  }, [svgContent, theme, onLayersExtracted])
+
+  // Apply visibility whenever hiddenElementIds changes
+  useEffect(() => {
+    if (!containerRef.current) return
+    const svg = containerRef.current.querySelector('svg')
+    if (!svg) return
+
+    const allTagged = svg.querySelectorAll('[data-layer-id]')
+    allTagged.forEach((el) => {
+      const id = el.getAttribute('data-layer-id')
+      if (!id) return
+      const htmlEl = el as SVGElement
+      if (hiddenElementIds?.has(id)) {
+        htmlEl.style.display = 'none'
+      } else {
+        htmlEl.style.display = ''
+      }
+    })
+  }, [hiddenElementIds])
 
   return <div ref={containerRef} className={className} />
 }
 
-// ── Apply color overrides to SVG elements ───────────────────
+// Re-tag elements after SVG re-injection (theme change)
+function retagElements(svg: SVGSVGElement, oldMap: Map<string, Element>) {
+  const texts = svg.querySelectorAll('text')
+  const newMap = new Map<string, Element>()
+
+  texts.forEach((text, idx) => {
+    const elId = `svg-text-${idx}`
+    text.setAttribute('data-layer-id', elId)
+    newMap.set(elId, text)
+  })
+
+  // Update the ref in-place
+  oldMap.clear()
+  for (const [k, v] of newMap) oldMap.set(k, v)
+}
+
 function applyColorOverrides(svg: SVGSVGElement, theme: SVGTheme) {
-  // Find the <style> element and rewrite the color values
   const styleEl = svg.querySelector('style')
   if (!styleEl) return
-
   let css = styleEl.textContent || ''
 
-  // Replace cls-1 fill (accent)
   css = css.replace(
     /\.cls-1\s*\{[^}]*fill:\s*#[0-9a-fA-F]+/,
     `.cls-1 {\n            fill: ${theme.accentColor}`
   )
-
-  // Replace cls-3 fill (modifiers)
   css = css.replace(
     /\.cls-3\s*\{[^}]*fill:\s*#[0-9a-fA-F]+/,
     `.cls-3 {\n            fill: ${theme.modifierColor}`
   )
-
-  // Replace cls-6 fill (alpha)
   css = css.replace(
     /\.cls-6\s*\{[^}]*fill:\s*#[0-9a-fA-F]+/,
     `.cls-6 {\n            fill: ${theme.alphaColor}`
   )
-
-  // Replace cls-7 fill (nav)
   css = css.replace(
     /\.cls-7\s*\{[^}]*fill:\s*#[0-9a-fA-F]+/,
     `.cls-7 {\n            fill: ${theme.navColor}`
   )
-
-  // Replace font-family
   css = css.replace(
     /font-family:\s*[^;]+/g,
     `font-family: ${theme.fontFamily}-SemiBold, ${theme.fontFamily}`
   )
-
-  // Replace font-weight
   css = css.replace(
     /font-weight:\s*\d+/g,
     `font-weight: ${theme.fontWeight}`
   )
-
-  // Replace font-variation-settings weight
   css = css.replace(
     /'wght'\s*\d+/g,
     `'wght' ${theme.fontWeight}`
   )
-
   styleEl.textContent = css
 }
 
-// ── Apply font overrides directly to text elements ──────────
 function applyFontOverrides(svg: SVGSVGElement, theme: SVGTheme) {
   const texts = svg.querySelectorAll('text')
   texts.forEach((text) => {
@@ -138,6 +164,5 @@ function applyFontOverrides(svg: SVGSVGElement, theme: SVGTheme) {
   })
 }
 
-// ── Exported component ──────────────────────────────────────
 export { InlineSVG }
 export default InlineSVG
