@@ -14,10 +14,10 @@ export interface SVGTheme {
 }
 
 export const defaultTheme: SVGTheme = {
-  accentColor: '#d92830',
-  modifierColor: '#1f7cca',
+  accentColor: '#ffffff',
+  modifierColor: '#ffffff',
   alphaColor: '#ffffff',
-  navColor: '#fdc32c',
+  navColor: '#ffffff',
   fontFamily: 'Inter',
   fontWeight: 600,
 }

@@ -311,159 +311,159 @@ const LeftBar = ({ activePage, onPageChange, svgLayers, hiddenIds: externalHidde
 
     return (
         <>
-            <div className='bg-white w-64 border-r border-gray-300 h-lvh'>
-            {/* header  */}
-            <div className='border-b border-gray-300  p-3'>
-                <div className='flex justify-between items-center pl-2 mb-2'>
-                    Logo
-                    <div className='flex gap-1 items-center justify-center'>
-                        <Undo2 className='size-5 text-gray-500 hover:text-black cursor-pointer transition-all duration-300' />
-                        <Redo2 className='size-5 text-gray-500 hover:text-black cursor-pointer transition-all duration-300' />
+            <div className='bg-white w-64 border-r border-gray-300 h-lvh rounded-lg shadow-lg'>
+                {/* header  */}
+                <div className='border-b border-gray-300  p-3'>
+                    <div className='flex justify-between items-center pl-2 mb-2'>
+                        Logo
+                        <div className='flex gap-1 items-center justify-center'>
+                            <Undo2 className='size-5 text-gray-500 hover:text-black cursor-pointer transition-all duration-300' />
+                            <Redo2 className='size-5 text-gray-500 hover:text-black cursor-pointer transition-all duration-300' />
+                        </div>
                     </div>
-                </div>
-                <div className='relative'>
-                    <Input
-                        ref={projectNameRef}
-                        placeholder="Enter name"
-                        value={projectName}
-                        onChange={(e) => setProjectName(e.target.value)}
-                        className='pr-8 border-transparent shadow-none focus-visible:border-ring'
-                    />
-                    <Pencil
-                        className='size-4 text-gray-500 hover:text-black cursor-pointer absolute right-2 top-1/2 -translate-y-1/2'
-                        onClick={() => projectNameRef.current?.focus()}
-                    />
-                </div>
-                {/* <h1 className='font-semibold px-2 py-1 bg-gray-200/60 rounded-sm flex justify-between items-center'>Ratna<Pencil className='size-5 text-gray-600'/></h1> */}
-            </div>
-
-            {/* selections */}
-            <div className='border-b border-gray-300  p-3 grid grid-cols-2 gap-1'>
-                <Combobox items={language} defaultValue="English">
-                    <div className='relative' >
-                        <span className='absolute top-1 left-3 text-xs text-muted-foreground z-10'>Language</span>
-                        <ComboboxInput placeholder="Select a language" className='h-12 [&_input]:pt-4 bg-gray-100' />
-                    </div>
-                    <ComboboxContent >
-                        <ComboboxEmpty>No items found.</ComboboxEmpty>
-                        <ComboboxList>
-                            {(item) => (
-                                <ComboboxItem key={item} value={item}>
-                                    {item}
-                                </ComboboxItem>
-                            )}
-                        </ComboboxList>
-                    </ComboboxContent>
-                </Combobox>
-                <Combobox items={frameworks} defaultValue="Cherry">
                     <div className='relative'>
-                        <span className='absolute top-1 left-3 text-xs text-muted-foreground z-10'>Profile</span>
-                        <ComboboxInput placeholder="Select a profile" className='h-12 [&_input]:pt-4 bg-gray-100' />
-                    </div>
-                    <ComboboxContent>
-                        <ComboboxEmpty>No items found.</ComboboxEmpty>
-                        <ComboboxList>
-                            {(item) => (
-                                <ComboboxItem key={item} value={item}>
-                                    {item}
-                                </ComboboxItem>
-                            )}
-                        </ComboboxList>
-                    </ComboboxContent>
-                </Combobox>
-                <Combobox items={subLegends} defaultValue="None">
-                    <div className='relative'>
-                        <span className='absolute top-1 left-3 text-xs text-muted-foreground z-10'>Sub-legend</span>
-                        <ComboboxInput placeholder="Select a Sub-legend" className='h-12 [&_input]:pt-4 bg-gray-100' />
-                    </div>
-                    <ComboboxContent>
-                        <ComboboxEmpty>No items found.</ComboboxEmpty>
-                        <ComboboxList>
-                            {(item) => (
-                                <ComboboxItem key={item} value={item}>
-                                    {item}
-                                </ComboboxItem>
-                            )}
-                        </ComboboxList>
-                    </ComboboxContent>
-                </Combobox>
-                <Combobox items={keycapUnits} defaultValue="Hide">
-                    <div className='relative'>
-                        <span className='absolute top-1 left-3 text-xs text-muted-foreground z-10'>Keycap Units</span>
-                        <ComboboxInput placeholder="Display units" className='h-12 [&_input]:pt-4 bg-gray-100' />
-                    </div>
-                    <ComboboxContent>
-                        <ComboboxEmpty>No items found.</ComboboxEmpty>
-                        <ComboboxList>
-                            {(item) => (
-                                <ComboboxItem key={item} value={item}>
-                                    {item}
-                                </ComboboxItem>
-                            )}
-                        </ComboboxList>
-                    </ComboboxContent>
-                </Combobox>
-
-            </div>
-
-            {/* layers  */}
-            <div
-                ref={layersContainerRef}
-                className='border-b border-gray-300  p-3 space-y-2'
-                onMouseDown={(e) => {
-                    // Only clear if clicking directly on the container, not on a layer row
-                    if (e.target === e.currentTarget || (e.target as HTMLElement).closest('[data-layers-container]') === e.currentTarget) {
-                        clearSelection();
-                    }
-                }}
-                data-layers-container
-            >
-                <h1 className='text-black font-semibold text-sm'>Layers</h1>
-                <div className='space-y-0.5'>
-                    {layers.map(node => (
-                        <LayerRow
-                            key={node.id}
-                            node={node}
-                            depth={0}
-                            expandedIds={expandedIds}
-                            selectedIds={selectedIds}
-                            hiddenIds={hiddenIds}
-                            hoveredId={hoveredId}
-                            renamingId={renamingId}
-                            onToggleExpand={toggleExpand}
-                            onSelect={handleSelect}
-                            onToggleVisibility={toggleVisibility}
-                            onSetHovered={setHoveredId}
-                            onStartRename={startRename}
-                            onFinishRename={finishRename}
-                            onCancelRename={cancelRename}
+                        <Input
+                            ref={projectNameRef}
+                            placeholder="Enter name"
+                            value={projectName}
+                            onChange={(e) => setProjectName(e.target.value)}
+                            className='pr-8 border-transparent shadow-none focus-visible:border-ring'
                         />
-                    ))}
+                        <Pencil
+                            className='size-4 text-gray-500 hover:text-black cursor-pointer absolute right-2 top-1/2 -translate-y-1/2'
+                            onClick={() => projectNameRef.current?.focus()}
+                        />
+                    </div>
+                    {/* <h1 className='font-semibold px-2 py-1 bg-gray-200/60 rounded-sm flex justify-between items-center'>Ratna<Pencil className='size-5 text-gray-600'/></h1> */}
                 </div>
-            </div>
 
-            {/* Pages  */}
-            <div className='p-3 space-y-2'>
-                <h1 className='text-black font-semibold text-sm'>Pages</h1>
-                <div
-                    className={`-ml-1 pl-2 py-1 text-sm rounded-sm cursor-pointer ${activePage === 'design' ? 'bg-gray-200 font-medium' : 'text-gray-700 hover:bg-gray-100'}`}
-                    onClick={() => onPageChange('design')}
-                >
-                    Design
+                {/* selections */}
+                <div className='border-b border-gray-300  p-3 grid grid-cols-2 gap-1'>
+                    <Combobox items={language} defaultValue="English">
+                        <div className='relative' >
+                            <span className='absolute top-1 left-3 text-xs text-muted-foreground z-10'>Language</span>
+                            <ComboboxInput placeholder="Select a language" className='h-12 [&_input]:pt-4 bg-gray-100' />
+                        </div>
+                        <ComboboxContent >
+                            <ComboboxEmpty>No items found.</ComboboxEmpty>
+                            <ComboboxList>
+                                {(item) => (
+                                    <ComboboxItem key={item} value={item}>
+                                        {item}
+                                    </ComboboxItem>
+                                )}
+                            </ComboboxList>
+                        </ComboboxContent>
+                    </Combobox>
+                    <Combobox items={frameworks} defaultValue="Cherry">
+                        <div className='relative'>
+                            <span className='absolute top-1 left-3 text-xs text-muted-foreground z-10'>Profile</span>
+                            <ComboboxInput placeholder="Select a profile" className='h-12 [&_input]:pt-4 bg-gray-100' />
+                        </div>
+                        <ComboboxContent>
+                            <ComboboxEmpty>No items found.</ComboboxEmpty>
+                            <ComboboxList>
+                                {(item) => (
+                                    <ComboboxItem key={item} value={item}>
+                                        {item}
+                                    </ComboboxItem>
+                                )}
+                            </ComboboxList>
+                        </ComboboxContent>
+                    </Combobox>
+                    <Combobox items={subLegends} defaultValue="None">
+                        <div className='relative'>
+                            <span className='absolute top-1 left-3 text-xs text-muted-foreground z-10'>Sub-legend</span>
+                            <ComboboxInput placeholder="Select a Sub-legend" className='h-12 [&_input]:pt-4 bg-gray-100' />
+                        </div>
+                        <ComboboxContent>
+                            <ComboboxEmpty>No items found.</ComboboxEmpty>
+                            <ComboboxList>
+                                {(item) => (
+                                    <ComboboxItem key={item} value={item}>
+                                        {item}
+                                    </ComboboxItem>
+                                )}
+                            </ComboboxList>
+                        </ComboboxContent>
+                    </Combobox>
+                    <Combobox items={keycapUnits} defaultValue="Hide">
+                        <div className='relative'>
+                            <span className='absolute top-1 left-3 text-xs text-muted-foreground z-10'>Keycap Units</span>
+                            <ComboboxInput placeholder="Display units" className='h-12 [&_input]:pt-4 bg-gray-100' />
+                        </div>
+                        <ComboboxContent>
+                            <ComboboxEmpty>No items found.</ComboboxEmpty>
+                            <ComboboxList>
+                                {(item) => (
+                                    <ComboboxItem key={item} value={item}>
+                                        {item}
+                                    </ComboboxItem>
+                                )}
+                            </ComboboxList>
+                        </ComboboxContent>
+                    </Combobox>
+
                 </div>
+
+                {/* layers  */}
                 <div
-                    className={`-ml-1 pl-2 py-1 text-sm rounded-sm cursor-pointer ${activePage === 'r1-r2' ? 'bg-gray-200 font-medium' : 'text-gray-700 hover:bg-gray-100'}`}
-                    onClick={() => onPageChange('r1-r2')}
+                    ref={layersContainerRef}
+                    className='border-b border-gray-300  p-3 space-y-2'
+                    onMouseDown={(e) => {
+                        // Only clear if clicking directly on the container, not on a layer row
+                        if (e.target === e.currentTarget || (e.target as HTMLElement).closest('[data-layers-container]') === e.currentTarget) {
+                            clearSelection();
+                        }
+                    }}
+                    data-layers-container
                 >
-                    R1-R2 Template
+                    <h1 className='text-black font-semibold text-sm'>Layers</h1>
+                    <div className='space-y-0.5'>
+                        {layers.map(node => (
+                            <LayerRow
+                                key={node.id}
+                                node={node}
+                                depth={0}
+                                expandedIds={expandedIds}
+                                selectedIds={selectedIds}
+                                hiddenIds={hiddenIds}
+                                hoveredId={hoveredId}
+                                renamingId={renamingId}
+                                onToggleExpand={toggleExpand}
+                                onSelect={handleSelect}
+                                onToggleVisibility={toggleVisibility}
+                                onSetHovered={setHoveredId}
+                                onStartRename={startRename}
+                                onFinishRename={finishRename}
+                                onCancelRename={cancelRename}
+                            />
+                        ))}
+                    </div>
                 </div>
-                <div
-                    className={`-ml-1 pl-2 py-1 text-sm rounded-sm cursor-pointer ${activePage === 'r3-r4' ? 'bg-gray-200 font-medium' : 'text-gray-700 hover:bg-gray-100'}`}
-                    onClick={() => onPageChange('r3-r4')}
-                >
-                    R3-R4 Template
+
+                {/* Pages  */}
+                <div className='p-3 space-y-2'>
+                    <h1 className='text-black font-semibold text-sm'>Pages</h1>
+                    <div
+                        className={`-ml-1 pl-2 py-1 text-sm rounded-sm cursor-pointer ${activePage === 'design' ? 'bg-gray-200 font-medium' : 'text-gray-700 hover:bg-gray-100'}`}
+                        onClick={() => onPageChange('design')}
+                    >
+                        Design
+                    </div>
+                    <div
+                        className={`-ml-1 pl-2 py-1 text-sm rounded-sm cursor-pointer ${activePage === 'r1-r2' ? 'bg-gray-200 font-medium' : 'text-gray-700 hover:bg-gray-100'}`}
+                        onClick={() => onPageChange('r1-r2')}
+                    >
+                        R1-R2 Template
+                    </div>
+                    <div
+                        className={`-ml-1 pl-2 py-1 text-sm rounded-sm cursor-pointer ${activePage === 'r3-r4' ? 'bg-gray-200 font-medium' : 'text-gray-700 hover:bg-gray-100'}`}
+                        onClick={() => onPageChange('r3-r4')}
+                    >
+                        R3-R4 Template
+                    </div>
                 </div>
-            </div>
             </div>
         </>
     )

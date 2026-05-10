@@ -9,12 +9,12 @@ export interface LayerNode {
 
 /** Map y-coordinate ranges (in SVG units) to row names */
 const ROW_BOUNDARIES: { maxY: number; id: string; name: string }[] = [
-    { maxY: 70,  id: 'fn-row',     name: 'R4 Keycaps (Function)' },
-    { maxY: 155, id: 'num-row',    name: 'R4 Keycaps (Number)' },
-    { maxY: 215, id: 'r3-row',     name: 'R3 Keycaps (QWERTY)' },
-    { maxY: 260, id: 'r2-row',     name: 'R2 Keycaps (Caps)' },
-    { maxY: 330, id: 'shift-row',  name: 'R1 Keycaps (Shift)' },
-    { maxY: 500, id: 'r1-row',     name: 'R1 Keycaps (Bottom)' },
+    { maxY: 70, id: 'fn-row', name: 'R4 Keycaps (Function)' },
+    { maxY: 155, id: 'num-row', name: 'R4 Keycaps (Number)' },
+    { maxY: 215, id: 'r3-row', name: 'R3 Keycaps (QWERTY)' },
+    { maxY: 260, id: 'r2-row', name: 'R2 Keycaps (Caps)' },
+    { maxY: 330, id: 'shift-row', name: 'R1 Keycaps (Shift)' },
+    { maxY: 500, id: 'r1-row', name: 'R1 Keycaps (Bottom)' },
 ];
 
 /** Classify a text element by its y-coordinate into a row group */

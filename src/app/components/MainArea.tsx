@@ -5,14 +5,16 @@ import R1R2, { type R1R2Handle } from './R1R2'
 import R3R4, { type R3R4Handle } from './R3R4'
 import Design from './Design'
 import { type LayerNode } from '../types'
+import { type SVGTheme } from './InlineSVG'
 
 interface MainAreaProps {
     activePage: 'design' | 'r1-r2' | 'r3-r4';
     onLayersExtracted?: (layers: LayerNode[]) => void;
     hiddenElementIds?: Set<string>;
+    theme: SVGTheme;
 }
 
-const MainArea = ({ activePage, onLayersExtracted, hiddenElementIds }: MainAreaProps) => {
+const MainArea = ({ activePage, onLayersExtracted, hiddenElementIds, theme }: MainAreaProps) => {
     const r1r2Ref = useRef<R1R2Handle>(null)
     const r3r4Ref = useRef<R3R4Handle>(null)
 
@@ -22,6 +24,7 @@ const MainArea = ({ activePage, onLayersExtracted, hiddenElementIds }: MainAreaP
                 <Design
                     onLayersExtracted={onLayersExtracted}
                     hiddenElementIds={hiddenElementIds}
+                    theme={theme}
                 />
             )}
             {activePage === 'r1-r2' && <R1R2 ref={r1r2Ref} className="h-full" />}
